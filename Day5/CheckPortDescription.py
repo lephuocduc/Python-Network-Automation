@@ -9,7 +9,7 @@ connection_info = {
 }
 
 with ConnectHandler(**connection_info) as conn:
-	out = conn.send_command("display interface 10GE 2/0/40")
+	out = conn.send_command("display interface 10GE 2/0/20")
 	lines = out.split('\n')
 	for line in lines:
 		if "Description:" in line:
