@@ -8,8 +8,10 @@ connection_info = {
     'password': '12345678a@'
 }
 
+port = input("Enter your port: ")
+
 with ConnectHandler(**connection_info) as conn:
-	out = conn.send_command("display interface 10GE 2/0/20")
+	out = conn.send_command(f"display interface {port}")
 	lines = out.split('\n')
 	for line in lines:
 		if "Description:" in line:
