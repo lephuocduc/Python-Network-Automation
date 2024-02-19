@@ -11,7 +11,7 @@ connection_info = {
 with ConnectHandler(**connection_info) as conn:
 	out = conn.send_command("display interface 10GE 2/0/40")
 	lines = out.split('\n')
-	for line in lines
+	for line in lines:
 		if "Description:" in line:
 			description = line.split ("Description:")[1].strip()
 			print(description)
