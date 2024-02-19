@@ -1,4 +1,4 @@
-from neimiko import ConnectHandler
+from netmiko import ConnectHandler
 
 connection_info = {
     'device_type': 'huawei',
