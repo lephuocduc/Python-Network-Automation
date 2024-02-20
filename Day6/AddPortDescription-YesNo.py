@@ -51,13 +51,18 @@ def main():
       try:
             with ConnectHandler(**connection_info) as conn:
                   description = get_current_description(conn, port)
-                  confirmation = input(f"Do you want to change port description of '{port}' from '{description}' to '{newdescription}'? Yes/ No: ")
-                  if confirmation.lower() == "yes":
-                        change_description(conn, port, newdescription)
-                  else:
-                        print("Operation cancelled!")
+                  while True:
+                        confirmation = input(f"Do you want to change port description of '{port}' from '{description}' to '{newdescription}'? Yes/ No: ")
+                        if confirmation.lower() == "yes":
+                            change_description(conn, port, newdescription)
+                            break
+                        if confirmation.lower() == "no":
+                            print("Operation cancelled!")
+                            break
+                        else:
+                            continue
       except Exception as e:
-            print(f"An error has occured {e}")
+            print(f"An error has occured: {e}")
 
 if __name__ == "__main__":
     main()

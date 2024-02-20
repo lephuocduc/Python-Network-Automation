@@ -14,7 +14,7 @@ config_commands = [
         'interface 10GE 2/0/40',
         'port link-type access',
         'port default vlan 140',
-				'commit'
+		'commit'
     ]
 output = conn.send_config_set(config_commands)
 print(output)
