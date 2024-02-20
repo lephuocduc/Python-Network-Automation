@@ -11,4 +11,5 @@ connection_info = {
 with ConnectHandler(**connection_info) as conn:
 	 out = conn.send_command("display ip interface brief")
 
+
 print(out)
