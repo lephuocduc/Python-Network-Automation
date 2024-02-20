@@ -7,40 +7,57 @@ from netmiko import ConnectHandler
 import getpass
 
 # Prompting for credentials
-username = input("Enter your username: ")
-password = getpass.getpass()
+def get_credentials():
+      username = input("Enter your username: ")
+      password = getpass.getpass()
+      return username, password
 
-connection_info = {
-    'device_type': 'huawei',
-    'host': '10.224.130.1',
-    'port': 22,
-    'username': username,
-    'password': password
-}
+def get_port_and_newdescription():
+      port = input("Enter your Port: ")
+      newdescription = input("Enter your Description: ")
+      return port, newdescription
 
-port = input("Enter your Port: ")
-newdescription = input("Enter your Description: ")
-description = ""
+def get_current_description(conn, port):
+      out = conn.send_command(f"display interface {port}")
+      lines = out.split('\n')
+      for line in lines:
+           if "Description:" in line:
+                return line.split ("Description:")[1].strip()
 
-with ConnectHandler(**connection_info) as conn:
-	out = conn.send_command(f"display interface {port}")
-	lines = out.split('\n')
-	for line in lines:
-		if "Description:" in line:
-			description = line.split ("Description:")[1].strip()
-			break
+def change_description(conn, port, newdescription):
+      conn.enable()
+      config_commands = [
+            f"interface {port}",
+            f"description {newdescription}",
+            "commit"
+            ]
+      out = conn.send_config_set(config_commands)
+      print(out)
 
-confirmation = input(f"Do you want to change port description of {port} from {description} to {newdescription}? Yes/ No: " )
+def main():
+      #Main function
+      username, password = get_credentials()
 
-if confirmation.lower() == 'yes':
-    with ConnectHandler (**connection_info) as conn:
-        conn.enable()
-        config_commands = [
-                f"interface {port}",
-                f"description {newdescription}",
-                "commit"
-                ]
-        out = conn.send_config_set(config_commands)
-        print(out)
-else:
-    print("Operation cancelled.")
+      connection_info = {
+        'device_type': 'huawei',
+        'host': '10.224.130.1',
+        'port': 22,
+        'username': username,
+        'password': password
+        }
+      
+      port, newdescription = get_port_and_newdescription()
+
+      try:
+            with ConnectHandler(**connection_info) as conn:
+                  description = get_current_description(conn, port)
+                  confirmation = input(f"Do you want to change port description of '{port}' from '{description}' to '{newdescription}'? Yes/ No: ")
+                  if confirmation.lower() == "yes":
+                        change_description(conn, port, newdescription)
+                  else:
+                        print("Operation cancelled!")
+      except Exception as e:
+            print(f"An error has occured {e}")
+
+if __name__ == "__main__":
+    main()
