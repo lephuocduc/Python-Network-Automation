@@ -4,23 +4,38 @@ from netmiko import ConnectHandler
 import getpass
 
 # Prompt for username and password
-username = input("Enter your username: ")
-password = getpass.getpass()
+def get_credentials():
+    username = input("Enter your username: ")
+    password = getpass.getpass()
+    return username, password
 
-connection_info = {
+def get_vlans():
+    with open('VLANList.txt','r') as file:
+        return file.read().splitlines()
+
+def display_ip_interface(conn, vlan):
+    out = conn.send_command(f"display ip interface {vlan}")
+    print(out)
+    
+def main():
+    username, password = get_credentials()
+
+    connection_info = {
     'device_type': 'huawei',
     'host': '10.224.130.1',
     'port': 22,
     'username': username,
     'password': password
-}
+    }
 
-# Open VLANList.txt and read its contents
-with open('VLANList.txt', 'r') as file:
-    vlans = file.read().splitlines()
+    vlans = get_vlans()
 
-# Assign values to variable vlan
-with ConnectHandler(**connection_info) as conn:
-    for vlan in vlans:
-        out = conn.send_command(f"display ip interface {vlan}")
-        print(out)  # Print the output for each VLAN
+    try:
+        with ConnectHandler(**connection_info) as conn:
+            for vlan in vlans:
+                display_ip_interface(conn, vlan)
+    except Exception as e:
+        print(f"An error has occured {e}")
+
+if __name__ == "__main__":
+    main()
