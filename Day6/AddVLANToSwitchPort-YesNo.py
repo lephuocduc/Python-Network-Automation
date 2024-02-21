@@ -9,7 +9,7 @@ from netmiko import ConnectHandler, NetMikoAuthenticationException
 import getpass
 
 def get_credentials():
-    username = input("Enter your username; ")
+    username = input("Enter your username: ")
     password = getpass.getpass()
     return username, password
 
@@ -67,11 +67,13 @@ def main():
                         break
                     else:
                         continue
+                break
         except NetMikoAuthenticationException:
             print("Invalid credentials. Please try again.")
+            continue
         except Exception as e:
             print(f"An error has occured: {e}")
-        break
+            break
 
 if __name__ == "__main__":
     main()

@@ -35,6 +35,7 @@ def main():
                 vlans = get_vlans()
                 for vlan in vlans:
                     display_ip_interface(conn, vlan)
+            break
         except NetMikoAuthenticationException:
             print("Invalid credentials. Please try again.")
             continue
