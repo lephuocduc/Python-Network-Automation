@@ -1,6 +1,6 @@
 # Check IP interface: Create a list of interface randomly. Then apply the Python script to check the information automatically.
 
-from netmiko import ConnectHandler
+from netmiko import ConnectHandler, NetMikoAuthenticationException
 import getpass
 
 # Prompt for username and password
@@ -18,24 +18,29 @@ def display_ip_interface(conn, vlan):
     print(out)
     
 def main():
-    username, password = get_credentials()
+    while True:
+        username, password = get_credentials()
 
-    connection_info = {
-    'device_type': 'huawei',
-    'host': '10.224.130.1',
-    'port': 22,
-    'username': username,
-    'password': password
-    }
+        connection_info = {
+        'device_type': 'huawei',
+        'host': '10.224.130.1',
+        'port': 22,
+        'username': username,
+        'password': password
+        }
 
-    vlans = get_vlans()
-
-    try:
-        with ConnectHandler(**connection_info) as conn:
-            for vlan in vlans:
-                display_ip_interface(conn, vlan)
-    except Exception as e:
-        print(f"An error has occured {e}")
+        try:
+            with ConnectHandler(**connection_info) as conn:
+                print("Connected successfully")
+                vlans = get_vlans()
+                for vlan in vlans:
+                    display_ip_interface(conn, vlan)
+        except NetMikoAuthenticationException:
+            print("Invalid credentials. Please try again.")
+            continue
+        except Exception as e:
+            print(f"An error has occured {e}")
+            break
 
 if __name__ == "__main__":
     main()

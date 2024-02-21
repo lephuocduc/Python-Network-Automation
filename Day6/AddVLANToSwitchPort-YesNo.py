@@ -5,7 +5,7 @@
     Yes/No option for execution.
 """
 
-from netmiko import ConnectHandler
+from netmiko import ConnectHandler, NetMikoAuthenticationException
 import getpass
 
 def get_credentials():
@@ -40,34 +40,38 @@ def add_vlan_to_switchport(conn, port, vlan):
     print(output)
 
 def main():
+    while True:
+        username, password = get_credentials()
 
-    username, password = get_credentials()
-    port, vlan = get_port_and_vlan()
-
-    connection_info = {
-        'device_type': 'huawei',
-        'host': '10.224.130.1',
-        'port': 22,
-        'username': username,
-        'password': password
-        }
-    
-    try:
-        with ConnectHandler(**connection_info) as conn:
-            get_current_vlan_info(conn, vlan)
-            get_current_switchport_info(conn, port)
-            while True:
-                confirmation = input(f"Do you want to assign {vlan} to {port}? Yes/ No: ")
-                if confirmation.lower() == "yes":
-                    add_vlan_to_switchport(conn, port, vlan)
-                    break
-                if confirmation.lower() == "no":
-                    print("Operation cancelled!")
-                    break
-                else:
-                    continue
-    except Exception as e:
-        print(f"An error has occured: {e}")
+        connection_info = {
+            'device_type': 'huawei',
+            'host': '10.224.130.1',
+            'port': 22,
+            'username': username,
+            'password': password
+            }
+        
+        try:
+            with ConnectHandler(**connection_info) as conn:
+                print("Connected successfully")
+                port, vlan = get_port_and_vlan()
+                get_current_vlan_info(conn, vlan)
+                get_current_switchport_info(conn, port)
+                while True:
+                    confirmation = input(f"Do you want to assign {vlan} to {port}? Yes/ No: ")
+                    if confirmation.lower() == "yes":
+                        add_vlan_to_switchport(conn, port, vlan)
+                        break
+                    if confirmation.lower() == "no":
+                        print("Operation cancelled!")
+                        break
+                    else:
+                        continue
+        except NetMikoAuthenticationException:
+            print("Invalid credentials. Please try again.")
+        except Exception as e:
+            print(f"An error has occured: {e}")
+        break
 
 if __name__ == "__main__":
     main()
