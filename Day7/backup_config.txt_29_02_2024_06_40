@@ -1,5 +1,5 @@
 !Software Version V100R005C10SPC200
-!Last configuration was updated at 2024-02-22 12:02:52+07:00 by admin
+!Last configuration was updated at 2024-02-29 12:53:40+07:00 by admin
 !Last configuration was saved at 2024-01-15 02:33:49+07:00 by admin
 #
 clock timezone GMT add 07:00:00
@@ -311,7 +311,7 @@ interface 10GE2/0/18
 interface 10GE2/0/19
 #
 interface 10GE2/0/20
- description Hello123
+ description 29/02/2024
  port default vlan 160
  device transceiver 10GBASE-FIBER
 #
