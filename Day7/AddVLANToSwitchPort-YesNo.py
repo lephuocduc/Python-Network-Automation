@@ -7,8 +7,8 @@
     2. Choose No -> Stop the script.  
 """
 
-"""
 from netmiko import ConnectHandler, NetMikoAuthenticationException
+from datetime import datetime
 import getpass
 
 def get_credentials():
@@ -30,6 +30,13 @@ def get_current_switchport_info(conn, port):
     out = conn.send_command(f"display interface {port}")
     print(f"BELOW IS YOUR PORT {port}")
     print(out)
+
+def backup_config(conn):
+    backup = conn.send_command('display current-configuration')
+    timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
+    with open(f'backup_config.txt_{timestamp}','w') as f:
+        f.write(backup)
+        print("Backup configuration has been saved to backup_config.txt")
 
 def add_vlan_to_switchport(conn, port, vlan):
     conn.enable()
@@ -63,6 +70,7 @@ def main():
                 while True:
                     confirmation = input(f"Do you want to assign {vlan} to {port}? Yes/ No: ")
                     if confirmation.lower() == "yes":
+                        backup_config(conn)
                         add_vlan_to_switchport(conn, port, vlan)
                         break
                     if confirmation.lower() == "no":
@@ -80,4 +88,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    """
+    

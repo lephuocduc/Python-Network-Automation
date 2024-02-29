@@ -6,9 +6,8 @@
 """
 
 
-
-"""
 from netmiko import ConnectHandler, NetMikoAuthenticationException
+from datetime import datetime
 import getpass
 
 # Prompting for credentials
@@ -28,6 +27,13 @@ def get_current_description(conn, port):
       for line in lines:
            if "Description:" in line:
                 return line.split ("Description:")[1].strip()
+           
+def backup_config(conn):
+    backup = conn.send_command('display current-configuration')
+    timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
+    with open(f'backup_config.txt_{timestamp}','w') as f:
+        f.write(backup)
+        print("Backup configuration has been saved to backup_config.txt")
 
 def change_description(conn, port, newdescription):
       conn.enable()
@@ -59,7 +65,7 @@ def main():
                         while True:
                               confirmation = input(f"Do you want to change port description of '{port}' from '{description}' to '{newdescription}'? Yes/ No: ")
                               if confirmation.lower() == "yes":
-                                    #backup function here!
+                                    backup_config(conn)
                                     change_description(conn, port, newdescription)
                                     break
                               if confirmation.lower() == "no":
@@ -77,4 +83,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-"""

@@ -5,8 +5,8 @@
     2. Choose No -> Stop the script.  
 """
 
-"""
 from netmiko import ConnectHandler, NetMikoAuthenticationException
+from datetime import datetime
 import getpass
 
 def get_credentials():
@@ -24,6 +24,13 @@ def get_current_description(conn, port):
     for line in lines:
         if "Description:" in line:
             return line.split ("Description:")[1].strip()
+
+def backup_config(conn):
+    backup = conn.send_command('display current-configuration')
+    timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
+    with open(f'backup_config.txt_{timestamp}','w') as f:
+        f.write(backup)
+        print("Backup configuration has been saved to backup_config.txt")
 
 def remove_port_description(conn, port):
     conn.enable()
@@ -56,6 +63,7 @@ def main():
                 while True:
                     confirmation = input(f"Do you want to remove port description of '{port}' from '{description}'? Yes/ No: ")
                     if confirmation.lower() == 'yes':
+                        backup_config(conn)
                         remove_port_description(conn, port)
                         break
                     if confirmation.lower() == 'no':
@@ -72,4 +80,3 @@ def main():
             break
 if __name__ == "__main__":
     main()
-"""
