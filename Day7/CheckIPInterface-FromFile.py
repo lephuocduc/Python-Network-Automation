@@ -13,10 +13,9 @@ def get_vlans():
     with open('VLANList.txt','r') as file:
         return file.read().splitlines()
 
-def display_ip_interface(conn, vlan, file):
+def check_ip_interface(conn, vlan):
     out = conn.send_command(f"display ip interface {vlan}")
-    print(out)
-    print(out, file=file)
+    return out
     
 def main():
     while True:
@@ -35,9 +34,11 @@ def main():
                 print("Connected successfully")
                 vlans = get_vlans()
                 timestampt = datetime.now().strftime("%d_%m_%y_%H_%M")
-                with open(f'CheckIPInterface_Output_{timestampt}.txt','w') as f:
+                with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
                     for vlan in vlans:
-                        display_ip_interface(conn, vlan, f)
+                        out = check_ip_interface(conn, vlan)
+                        print(out)
+                        print(out, file=f)
             break
         except NetMikoAuthenticationException:
             print("Invalid credentials. Please try again.")
