@@ -1,4 +1,4 @@
-# Check Port configuration: Create a list of port randomly. Then apply the Python script to check the information automatically.
+#DONE Create a list of port randomly. Then apply the Python script to check the information automatically -> export to a file (txt or CSV…)
 
 from netmiko import ConnectHandler, NetMikoAuthenticationException
 from datetime import datetime
@@ -14,10 +14,9 @@ def get_ports(): # Open PortList.txt and read its contents
 	with open('PortList.txt', 'r') as file:
 	    return file.read().splitlines()
 
-def check_port_configuration(conn, port, file):
+def check_port_configuration(conn, port):
 	out = conn.send_command(f"display interface {port}")
-	print(out)
-	print(out, file=file)
+	return out
 
 def main():
 	while True:
@@ -35,9 +34,11 @@ def main():
 				print("Connected Successfully")
 				ports = get_ports()
 				timestamp = datetime.now().strftime("%d_%m_%y_%H_%M")
-				with open(f"CheckPortConfiguration_Output_{timestamp}.txt",'w') as f:
+				with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt",'w') as f:
 					for port in ports:
-						check_port_configuration(conn, port, f)
+						out = check_port_configuration(conn, port)
+						print(out)
+						print(out, file=f)
 				break
 		except NetMikoAuthenticationException:
 			print("Invalid credentials, please try again!")

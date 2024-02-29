@@ -1,4 +1,4 @@
-# Create a list of interface randomly. Then apply the Python script to check the information automatically -> export to a file (txt or CSV…)
+#DONE Create a list of interface randomly. Then apply the Python script to check the information automatically -> export to a file (txt or CSV…)
 from netmiko import ConnectHandler, NetMikoAuthenticationException
 from datetime import datetime
 import getpass

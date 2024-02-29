@@ -1,0 +1,461 @@
+!Software Version V100R005C10SPC200
+!Last configuration was updated at 2024-02-29 13:56:33+07:00 by admin
+!Last configuration was saved at 2024-01-15 02:33:49+07:00 by admin
+#
+clock timezone GMT add 07:00:00
+#
+sysname VN-Lab_CoreSW-01
+#
+device board 1 board-type CE6850-48S4Q-EI
+device board 2 board-type CE6850-48S4Q-EI
+#
+drop-profile default
+#
+dcb pfc
+#
+dcb ets-profile default
+#
+vlan batch 128 to 191 990 997 1300 to 1400
+#
+telnet server disable
+telnet ipv6 server disable
+#
+diffserv domain default
+#
+vlan 130
+ description Wireless test 2
+ name Lab-DMZ
+ aggregate-vlan
+ access-vlan 1300 to 1329
+#
+vlan 131
+ name Lab-Internal
+ aggregate-vlan
+ access-vlan 1330 to 1359
+#
+vlan 132
+ name Lab-Heartbeat
+ aggregate-vlan
+ access-vlan 1360 to 1389
+#
+acl number 3001
+ rule 200 deny ip source 10.224.130.0 0.0.0.255 destination 10.224.131.0 0.0.0.255
+ rule 201 deny ip source 10.224.131.0 0.0.0.255 destination 10.224.130.0 0.0.0.255
+ rule 202 deny ip source 10.224.130.0 0.0.0.255 destination 10.224.132.0 0.0.0.255
+ rule 203 deny ip source 10.224.132.0 0.0.0.255 destination 10.224.130.0 0.0.0.255
+ rule 204 deny ip source 10.224.131.0 0.0.0.255 destination 10.224.132.0 0.0.0.255
+ rule 205 deny ip source 10.224.132.0 0.0.0.255 destination 10.224.131.0 0.0.0.255
+#
+aaa
+ undo local-user policy security-enhance
+ local-user catflap password irreversible-cipher $1a$QfTg<"|1pN$"b}#NeK);Fp}j+/1h^jF,uS)SPjt&O>!n'4i'r5S$
+ local-user catflap service-type ssh
+ local-user catflap level 15
+ local-user admin password irreversible-cipher $1a$3T$$Fmo#(>$'Yv|V])Au/="+<UkLfWIxwXnQX}f~(ph(n:<RD-9$
+ local-user admin service-type ssh
+ local-user admin level 15
+ #
+ authentication-scheme default
+ #
+ authorization-scheme default
+ #
+ accounting-scheme default
+ #
+ domain default
+ #
+ domain default_admin
+#
+stack
+ #
+ stack member 1 domain 10
+ stack member 1 priority 150
+ #
+ stack member 2 domain 10
+ stack member 2 priority 120
+#
+interface Vlanif130
+ ip address 10.224.130.1 255.255.255.0
+#
+interface Vlanif131
+ ip address 10.224.131.1 255.255.255.0
+#
+interface Vlanif132
+ ip address 10.224.132.1 255.255.255.0
+#
+interface Vlanif997
+ ip address 10.224.255.20 255.255.255.248
+#
+interface MEth0/0/0
+#
+interface Eth-Trunk10
+ description **To Fortigate Lab INSIDE**
+ port link-type trunk
+ port trunk allow-pass vlan 997
+ mode lacp-static
+#
+interface Eth-Trunk11
+ description **To Fortigate Lab INSIDE**
+ port link-type trunk
+ port trunk allow-pass vlan 997
+ mode lacp-static
+#
+interface Eth-Trunk20
+ description **To Fortigate Lab Internet**
+ port link-type trunk
+ port trunk allow-pass vlan 990
+ mode lacp-static
+#
+interface Eth-Trunk21
+ description **To Fortigate Lab Internet**
+ port link-type trunk
+ port trunk allow-pass vlan 990
+ mode lacp-static
+#
+interface Stack-Port1/1
+#
+interface Stack-Port2/1
+#
+interface 10GE1/0/1
+ description To ESXi 01 Port 3
+ port link-type trunk
+ port trunk allow-pass vlan 990 1300 to 1389
+ traffic-filter acl 3001 inbound 
+ traffic-filter acl 3001 outbound 
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/2
+#
+interface 10GE1/0/3
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/4
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/5
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/6
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/7
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/8
+ port default vlan 997
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/9
+#
+interface 10GE1/0/10
+#
+interface 10GE1/0/11
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/12
+#
+interface 10GE1/0/13
+#
+interface 10GE1/0/14
+#
+interface 10GE1/0/15
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/16
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/17
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/18
+#
+interface 10GE1/0/19
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/20
+ port default vlan 997
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/21
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/22
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/23
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/24
+#
+interface 10GE1/0/25
+ port link-type trunk
+ port trunk allow-pass vlan 180 185 to 187 200 to 220
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/26
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/27
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/28
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/29
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/30
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/31
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/32
+#
+interface 10GE1/0/33
+#
+interface 10GE1/0/34
+#
+interface 10GE1/0/35
+#
+interface 10GE1/0/36
+#
+interface 10GE1/0/37
+#
+interface 10GE1/0/38
+#
+interface 10GE1/0/39
+#
+interface 10GE1/0/40
+ description **To Vigor Router Port 1**
+ port default vlan 990
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/41
+#
+interface 10GE1/0/42
+#
+interface 10GE1/0/43
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE1/0/44
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/45
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/46
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/47
+ description **To Fortigate Active Port 31**
+ eth-trunk 10
+ device transceiver 1000BASE-T
+#
+interface 10GE1/0/48
+ description **To Fortigate Active Port 32**
+ eth-trunk 20
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/1
+ description To ESXi 02 Port 3
+ port link-type trunk
+ port trunk allow-pass vlan 990 1300 to 1389
+ traffic-filter acl 3001 inbound 
+ traffic-filter acl 3001 outbound 
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/2
+#
+interface 10GE2/0/3
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/4
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/5
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/6
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/7
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/8
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/9
+#
+interface 10GE2/0/10
+#
+interface 10GE2/0/11
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/12
+#
+interface 10GE2/0/13
+#
+interface 10GE2/0/14
+#
+interface 10GE2/0/15
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/16
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/17
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/18
+#
+interface 10GE2/0/19
+#
+interface 10GE2/0/20
+ description TestABC
+ port default vlan 160
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE2/0/21
+ description TestABC
+ port default vlan 160
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/22
+ description TestABC
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE2/0/23
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE2/0/24
+#
+interface 10GE2/0/25
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/26
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/27
+#
+interface 10GE2/0/28
+#
+interface 10GE2/0/29
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/30
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/31
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/32
+#
+interface 10GE2/0/33
+#
+interface 10GE2/0/34
+#
+interface 10GE2/0/35
+#
+interface 10GE2/0/36
+#
+interface 10GE2/0/37
+#
+interface 10GE2/0/38
+#
+interface 10GE2/0/39
+#
+interface 10GE2/0/40
+ port default vlan 140
+#
+interface 10GE2/0/41
+#
+interface 10GE2/0/42
+#
+interface 10GE2/0/43
+ device transceiver 10GBASE-FIBER
+#
+interface 10GE2/0/44
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/45
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/46
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/47
+ description **To Fortigate Standby Port 31**
+ eth-trunk 11
+ device transceiver 1000BASE-T
+#
+interface 10GE2/0/48
+ description **To Fortigate Standby Port 32**
+ eth-trunk 21
+ device transceiver 1000BASE-T
+#
+interface 40GE1/0/1
+ port mode stack 
+ stack-port 1/1
+ device transceiver 40GBASE-COPPER
+#
+interface 40GE1/0/2
+ port mode stack 
+ stack-port 1/1
+#
+interface 40GE1/0/3
+ port mode stack 
+ stack-port 1/1
+ device transceiver 40GBASE-COPPER
+#
+interface 40GE1/0/4
+ port mode stack 
+ stack-port 1/1
+ device transceiver 40GBASE-COPPER
+#
+interface 40GE2/0/1
+ port mode stack 
+ stack-port 2/1
+ device transceiver 40GBASE-COPPER
+#
+interface 40GE2/0/2
+ port mode stack 
+ stack-port 2/1
+#
+interface 40GE2/0/3
+ port mode stack 
+ stack-port 2/1
+ device transceiver 40GBASE-COPPER
+#
+interface 40GE2/0/4
+ port mode stack 
+ stack-port 2/1
+ device transceiver 40GBASE-COPPER
+#
+interface NULL0
+#
+ip route-static 0.0.0.0 0.0.0.0 10.224.255.17
+#
+lldp enable
+#
+stelnet server enable
+ssh authentication-type default password
+ssh user admin
+ssh user admin authentication-type password
+ssh user admin service-type stelnet
+ssh authorization-type default aaa
+#
+ssh server cipher aes256_ctr aes128_ctr aes256_cbc aes128_cbc 3des_cbc blowfish_cbc
+ssh server hmac sha2_256_96 sha2_256 sha1 sha1_96
+#
+user-interface con 0
+ authentication-mode password
+ set authentication password cipher $1a$'2#qIJ~:GX$wD^KQ,4wS6(#"0+asdt;:j,CX_7X&Mq}d."Rn"J'$
+#
+user-interface vty 0 4
+ authentication-mode aaa
+ user privilege level 15
+ idle-timeout 15 0
+#
+vm-manager
+#
+return

@@ -1,4 +1,4 @@
-"""
+"""DONE
     Pre-check current port description.(Show all port description)
     Yes/No option for execution.
       1. Choose Yes -> Export backup configuration file for port -> execute the script changing configuration (Many Port to be added one Description / Many Ports to be added many appropriate descriptions)
@@ -16,10 +16,15 @@ def get_credentials():
       password = getpass.getpass()
       return username, password
 
-def get_port_and_newdescription():
-      port = input("Enter your Port: ")
-      newdescription = input("Enter your Description: ")
-      return port, newdescription
+def get_ports_and_description():
+      ports =[]
+      newdescriptions = []
+      with open('PortDescription.txt','r') as file:
+            for line in file:
+                  port, newdescription = line.strip().split(" | ")
+                  ports.append(port)
+                  newdescriptions.append(newdescription)
+      return ports, newdescriptions
 
 def get_current_description(conn, port):
       out = conn.send_command(f"display interface {port}")
@@ -31,7 +36,7 @@ def get_current_description(conn, port):
 def backup_config(conn):
     backup = conn.send_command('display current-configuration')
     timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
-    with open(f'backup_config.txt_{timestamp}','w') as f:
+    with open(f'./backup_files/backup_config.txt_{timestamp}','w') as f:
         f.write(backup)
         print("Backup configuration has been saved to backup_config.txt")
 
@@ -60,19 +65,26 @@ def main():
 
             try:
                   with ConnectHandler(**connection_info) as conn:
-                        port, newdescription = get_port_and_newdescription()
-                        description = get_current_description(conn, port)
+                        print("Connected Successfully")
+                        ports, newdescriptions = get_ports_and_description()
                         while True:
-                              confirmation = input(f"Do you want to change port description of '{port}' from '{description}' to '{newdescription}'? Yes/ No: ")
-                              if confirmation.lower() == "yes":
-                                    backup_config(conn)
-                                    change_description(conn, port, newdescription)
-                                    break
-                              if confirmation.lower() == "no":
-                                    print("Operation cancelled!")
-                                    break
-                              else:
-                                    continue
+                              for port, newdescription in zip(ports, newdescriptions):
+                                    print(f"Change description of port '{port}' from '{get_current_description(conn,port)}' to '{newdescription}'")
+                              
+                              while True:
+                                    confirmation = input("Do you want to execute the scipt? Yes/ No: ")
+                                    if confirmation.lower() == "yes":
+                                          backup_config(conn)
+                                          for port, newdescription in zip(ports, newdescriptions):
+                                                change_description(conn, port, newdescription)
+                                          print("All descriptions after changed")
+                                          for port in ports:
+                                                print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
+                                          break
+                                    if confirmation.lower() == "no":
+                                          print("Operation cancelled!")
+                                          break
+                              break
                         break
             except NetMikoAuthenticationException:
                   print("Invalid credentials, please try again")
