@@ -1,4 +1,4 @@
-"""
+""" ...
     *Assign VLAN to switch port:*
 
     Pre-check all vlan infor & vlan interface.
@@ -16,10 +16,15 @@ def get_credentials():
     password = getpass.getpass()
     return username, password
 
-def get_port_and_vlan():
-    port = input("Enter your port: ")
-    vlan = input("Enter your Vlan to assign: ")
-    return port, vlan
+def get_ports_and_vlans():
+    ports = []
+    vlans = []
+    with open("Port-Vlan.txt",'r') as file:
+        for line in file:
+            port, vlan = line.strip().split(" | ")
+            ports.append(port)
+            vlans.append(vlan)
+    return ports, vlans
 
 def get_current_vlan_info(conn, vlan):
     out = conn.send_command(f"display {vlan}")
@@ -34,7 +39,7 @@ def get_current_switchport_info(conn, port):
 def backup_config(conn):
     backup = conn.send_command('display current-configuration')
     timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
-    with open(f'backup_config.txt_{timestamp}','w') as f:
+    with open(f'./backup_files/backup_config.txt_{timestamp}','w') as f:
         f.write(backup)
         print("Backup configuration has been saved to backup_config.txt")
 
@@ -64,20 +69,23 @@ def main():
         try:
             with ConnectHandler(**connection_info) as conn:
                 print("Connected successfully")
-                port, vlan = get_port_and_vlan()
-                get_current_vlan_info(conn, vlan)
-                get_current_switchport_info(conn, port)
-                while True:
-                    confirmation = input(f"Do you want to assign {vlan} to {port}? Yes/ No: ")
+                ports, vlans = get_ports_and_vlans()
+                for vlan in vlans:
+                    get_current_vlan_info(conn, vlan)
+                for port in ports:
+                    get_current_switchport_info(conn, port)
+                for port, vlan in zip(ports, vlans):
+                    print(f"Assign {vlan} to port: {port}")
+                while True:                    
+                    confirmation = input("Do you want to execute the script? Yes/ No: ")
                     if confirmation.lower() == "yes":
                         backup_config(conn)
-                        add_vlan_to_switchport(conn, port, vlan)
+                        for port, vlan in zip(ports,vlans):
+                            add_vlan_to_switchport(conn, port, vlan)
                         break
                     if confirmation.lower() == "no":
                         print("Operation cancelled!")
                         break
-                    else:
-                        continue
                 break
         except NetMikoAuthenticationException:
             print("Invalid credentials. Please try again.")
