@@ -67,24 +67,21 @@ def main():
                   with ConnectHandler(**connection_info) as conn:
                         print("Connected Successfully")
                         ports, newdescriptions = get_ports_and_description()
+                        for port, newdescription in zip(ports, newdescriptions):
+                              print(f"Change description of port '{port}' from '{get_current_description(conn,port)}' to '{newdescription}'")
                         while True:
-                              for port, newdescription in zip(ports, newdescriptions):
-                                    print(f"Change description of port '{port}' from '{get_current_description(conn,port)}' to '{newdescription}'")
-                              
-                              while True:
-                                    confirmation = input("Do you want to execute the scipt? Yes/ No: ")
-                                    if confirmation.lower() == "yes":
-                                          backup_config(conn)
-                                          for port, newdescription in zip(ports, newdescriptions):
-                                                change_description(conn, port, newdescription)
-                                          print("All descriptions after changed")
-                                          for port in ports:
-                                                print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
-                                          break
-                                    if confirmation.lower() == "no":
-                                          print("Operation cancelled!")
-                                          break
-                              break
+                              confirmation = input("Do you want to execute the scipt? Yes/ No: ")
+                              if confirmation.lower() == "yes":
+                                    backup_config(conn)
+                                    for port, newdescription in zip(ports, newdescriptions):
+                                          change_description(conn, port, newdescription)
+                                    print("All descriptions after changed")
+                                    for port in ports:
+                                          print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
+                                    break
+                              if confirmation.lower() == "no":
+                                    print("Operation cancelled!")
+                                    break
                         break
             except NetMikoAuthenticationException:
                   print("Invalid credentials, please try again")
