@@ -1,0 +1,135 @@
+10GE2/0/20 current state : DOWN (ifindex: 86)
+Line protocol current state : DOWN 
+Description: Hello333
+Switch Port, PVID :  160, TPID : 8100(Hex), The Maximum Frame Length is 9216
+Internet protocol processing : disabled
+IP Sending Frames' Format is PKTFMT_ETHNT_2, Hardware address is 18de-d7a6-ae21
+Port Mode:             AUTO,     Port Split:                   DISABLE
+Speed:                 AUTO,     Loopback:                        NONE
+Duplex:                FULL,     Negotiation:                        -
+Input Flow-control: DISABLE,     Output Flow-control:          DISABLE
+Mdi:                      -
+Last physical up time   : -
+Last physical down time : 2023-03-18 16:08:02+07:00
+Current system time: 2024-03-11 00:03:13+07:00
+Statistics last cleared:never
+    Last 300 seconds input rate: 0 bits/sec, 0 packets/sec
+    Last 300 seconds output rate: 0 bits/sec, 0 packets/sec
+    Input peak rate 0 bits/sec, Record time: -
+    Output peak rate 0 bits/sec, Record time: -
+    Input :                  0 bytes,                  0 packets
+    Output:                  0 bytes,                  0 packets
+    Input: 
+      Unicast:                      0,   Multicast:                       0
+      Broadcast:                    0,   Jumbo:                           0
+      Discard:                      0,   Frames:                          0
+      Pause:                        0
+      
+      Total Error:                  0
+      CRC:                          0,   Giants:                          0
+      Jabbers:                      0,   Fragments:                       0
+      Runts:                        0,   DropEvents:                      0
+      Alignments:                   0,   Symbols:                         0
+      Ignoreds:                     0
+   
+    Output:
+      Unicast:                      0,   Multicast:                       0
+      Broadcast:                    0,   Jumbo:                           0
+      Discard:                      0,   Buffers Purged:                  0
+      Pause:                        0
+
+    Input bandwidth utilization threshold : 90.00%
+    Output bandwidth utilization threshold: 90.00%
+    Last 300 seconds input utility rate:  0.00%
+    Last 300 seconds output utility rate: 0.00%
+
+10GE2/0/21 current state : DOWN (ifindex: 87)
+Line protocol current state : DOWN 
+Description: Hello333
+Switch Port, PVID :  161, TPID : 8100(Hex), The Maximum Frame Length is 9216
+Internet protocol processing : disabled
+IP Sending Frames' Format is PKTFMT_ETHNT_2, Hardware address is 18de-d7a6-ae21
+Port Mode:    COMMON COPPER,     Port Split:                   DISABLE
+Speed:                 AUTO,     Loopback:                        NONE
+Duplex:                FULL,     Negotiation:                   ENABLE
+Input Flow-control: DISABLE,     Output Flow-control:          DISABLE
+Mdi:                   AUTO
+Last physical up time   : -
+Last physical down time : 2023-03-18 16:08:02+07:00
+Current system time: 2024-03-11 00:03:13+07:00
+Statistics last cleared:never
+    Last 300 seconds input rate: 0 bits/sec, 0 packets/sec
+    Last 300 seconds output rate: 0 bits/sec, 0 packets/sec
+    Input peak rate 0 bits/sec, Record time: -
+    Output peak rate 0 bits/sec, Record time: -
+    Input :                  0 bytes,                  0 packets
+    Output:                  0 bytes,                  0 packets
+    Input: 
+      Unicast:                      0,   Multicast:                       0
+      Broadcast:                    0,   Jumbo:                           0
+      Discard:                      0,   Frames:                          0
+      Pause:                        0
+      
+      Total Error:                  0
+      CRC:                          0,   Giants:                          0
+      Jabbers:                      0,   Fragments:                       0
+      Runts:                        0,   DropEvents:                      0
+      Alignments:                   0,   Symbols:                         0
+      Ignoreds:                     0
+   
+    Output:
+      Unicast:                      0,   Multicast:                       0
+      Broadcast:                    0,   Jumbo:                           0
+      Discard:                      0,   Buffers Purged:                  0
+      Pause:                        0
+
+    Input bandwidth utilization threshold : 90.00%
+    Output bandwidth utilization threshold: 90.00%
+    Last 300 seconds input utility rate:  0.00%
+    Last 300 seconds output utility rate: 0.00%
+
+10GE2/0/22 current state : DOWN (ifindex: 88)
+Line protocol current state : DOWN 
+Description: Hello333
+Switch Port, PVID :  162, TPID : 8100(Hex), The Maximum Frame Length is 9216
+Internet protocol processing : disabled
+IP Sending Frames' Format is PKTFMT_ETHNT_2, Hardware address is 18de-d7a6-ae21
+Port Mode:     COMMON FIBER,     Port Split:                   DISABLE
+Speed:                10000,     Loopback:                        NONE
+Duplex:                FULL,     Negotiation:                  DISABLE
+Input Flow-control: DISABLE,     Output Flow-control:          DISABLE
+Mdi:                      -
+Last physical up time   : -
+Last physical down time : 2023-03-18 16:08:02+07:00
+Current system time: 2024-03-11 00:03:13+07:00
+Statistics last cleared:never
+    Last 300 seconds input rate: 0 bits/sec, 0 packets/sec
+    Last 300 seconds output rate: 0 bits/sec, 0 packets/sec
+    Input peak rate 0 bits/sec, Record time: -
+    Output peak rate 0 bits/sec, Record time: -
+    Input :                  0 bytes,                  0 packets
+    Output:                  0 bytes,                  0 packets
+    Input: 
+      Unicast:                      0,   Multicast:                       0
+      Broadcast:                    0,   Jumbo:                           0
+      Discard:                      0,   Frames:                          0
+      Pause:                        0
+      
+      Total Error:                  0
+      CRC:                          0,   Giants:                          0
+      Jabbers:                      0,   Fragments:                       0
+      Runts:                        0,   DropEvents:                      0
+      Alignments:                   0,   Symbols:                         0
+      Ignoreds:                     0
+   
+    Output:
+      Unicast:                      0,   Multicast:                       0
+      Broadcast:                    0,   Jumbo:                           0
+      Discard:                      0,   Buffers Purged:                  0
+      Pause:                        0
+
+    Input bandwidth utilization threshold : 90.00%
+    Output bandwidth utilization threshold: 90.00%
+    Last 300 seconds input utility rate:  0.00%
+    Last 300 seconds output utility rate: 0.00%
+
