@@ -24,6 +24,13 @@ def check_port_configuration(conn, port):
 	out = conn.send_command(f"display interface {port}")
 	return out
 
+def check_port_exists(conn, port):
+    output = conn.send_command(f"display interface {port}")
+    if "Wrong parameter found at '^' position." in output or "Error: Incomplete command found at '^' position." in output:
+        return False
+    else:
+        return True
+	
 def main():
 	while True:
 		username, password = get_credentials()
@@ -65,9 +72,13 @@ def main():
 							if Port == "":
 								break
 							else:
-								Ports.append(Port)
-								number += 1
-								continue
+								if check_port_exists(conn, Port):
+									Ports.append(Port)
+									number += 1
+									continue
+								else:
+									print(f"Port '{Port}' does not exist. Please try again.")
+									continue
 						with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt",'w') as f:
 							for Port in Ports:
 								out = check_port_configuration(conn, Port)

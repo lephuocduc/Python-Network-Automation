@@ -21,7 +21,14 @@ def Get_IPInterface(filepath):
 def check_ip_interface(conn, IPInterface):
     out = conn.send_command(f"display ip interface {IPInterface}")
     return out
-    
+
+def check_interface_exists(conn, GetIPInterface):
+    output = conn.send_command(f"display ip interface {GetIPInterface}")
+    if "Wrong parameter found at '^' position." in output or "Error: Incomplete command found at '^' position." in output:
+        return False
+    else:
+        return True
+
 def main():
     while True:
         username, password = get_credentials()
@@ -63,9 +70,13 @@ def main():
                             if GetIPInterface == "":
                                 break
                             else:
-                                IPInterfaceList.append(GetIPInterface)
-                                number += 1
-                                continue
+                                if check_interface_exists(conn, GetIPInterface):
+                                    IPInterfaceList.append(GetIPInterface)
+                                    number += 1
+                                    continue
+                                else:
+                                    print(f"Interface '{GetIPInterface}' does not exist. Please try again.")
+                                    continue
                         with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
                             for IPInterface in IPInterfaceList:
                                 out = check_ip_interface(conn, IPInterface)

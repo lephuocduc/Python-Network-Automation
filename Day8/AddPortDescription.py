@@ -54,6 +54,13 @@ def change_description(conn, port, newdescription):
       out = conn.send_config_set(config_commands)
       print(out)
 
+def check_port_exists(conn, port):
+    output = conn.send_command(f"display interface {port}")
+    if "Wrong parameter found at '^' position." in output or "Error: Incomplete command found at '^' position." in output:
+        return False
+    else:
+        return True
+
 def main():
     #Main function
     while True:
@@ -101,13 +108,17 @@ def main():
                         ports = []
                         number = 1
                         while True:
-                            getport = input(f"Enter your port {number}: ")
-                            if getport == "":
+                            port = input(f"Enter your port {number}: ")
+                            if port == "":
                                 break
                             else:  
-                                ports.append(getport)
-                                number += 1
-                                continue
+                                if check_port_exists(conn, port):
+                                    ports.append(port)
+                                    number += 1
+                                    continue
+                                else:
+                                    print(f"Port '{port}' does not exist. Please try again.")
+                                    continue
                         newdescription = input("Enter new description: ")
                         for port in ports:
                             print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
