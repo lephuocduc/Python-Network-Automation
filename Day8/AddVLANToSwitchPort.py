@@ -7,5 +7,6 @@ Yes/No option for execution.
 
 1.Choose Yes -> Export backup configuration file for port -> execute the script changing configuration. (Many ports to be assigned to one Vlan / Many ports to be assigned to many appropriate VLAN)
 
-2.Choose No è Stop the script.  
+2.Choose No -> Stop the script.  
 """
+
