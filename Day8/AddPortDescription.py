@@ -78,7 +78,7 @@ def main():
             with ConnectHandler(**connection_info) as conn:
                 print("Connected Successfully")
                 while True:
-                    confirmation1 = input("Do you want to enter PATH FILE or apply for ALL PORTS? Type '1' to enter the path. Type '2' to apply for all ports: ")
+                    confirmation1 = input("Type '1' to enter the path. Type '2' to apply for all ports: ")
                     if confirmation1 == "1":
                         while True:
                             try:

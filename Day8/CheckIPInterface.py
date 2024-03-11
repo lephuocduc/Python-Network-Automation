@@ -14,16 +14,16 @@ def get_credentials():
     password = getpass.getpass()
     return username, password
 
-def Get_IPInterface(filepath):
+def Get_Interface(filepath):
     with open(f'{filepath}','r') as file:
         return file.read().splitlines()
 
-def check_ip_interface(conn, IPInterface):
-    out = conn.send_command(f"display ip interface {IPInterface}")
+def check_ip_interface(conn, Interface):
+    out = conn.send_command(f"display ip interface {Interface}")
     return out
 
-def check_interface_exists(conn, GetIPInterface):
-    output = conn.send_command(f"display ip interface {GetIPInterface}")
+def check_interface_exists(conn, Interface):
+    output = conn.send_command(f"display ip interface {Interface}")
     if "Wrong parameter found at '^' position." in output or "Error: Incomplete command found at '^' position." in output:
         return False
     else:
@@ -51,35 +51,35 @@ def main():
                         while True:
                             try:
                                 filepath = input("Enter your file path: ")
-                                IPInterfaceList = Get_IPInterface(filepath)
+                                InterfaceList = Get_Interface(filepath)
                                 break #exit loop when file is found
                             except FileNotFoundError:
                                 print("File not found. Please try again!")
                                 continue                        
                         with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
-                            for IPInterface in IPInterfaceList:
-                                out = check_ip_interface(conn, IPInterface)
+                            for Interface in InterfaceList:
+                                out = check_ip_interface(conn, Interface)
                                 print(out)
                                 print(out, file=f)
                         break
                     if confirmation == "2":
-                        IPInterfaceList = []
+                        InterfaceList = []
                         number = 1
                         while True:
-                            GetIPInterface = input(f"Enter your IP Interface {number}: ")
-                            if GetIPInterface == "":
+                            Interface = input(f"Enter your Interface {number}: ")
+                            if Interface == "":
                                 break
                             else:
-                                if check_interface_exists(conn, GetIPInterface):
-                                    IPInterfaceList.append(GetIPInterface)
+                                if check_interface_exists(conn, Interface):
+                                    InterfaceList.append(Interface)
                                     number += 1
                                     continue
                                 else:
-                                    print(f"Interface '{GetIPInterface}' does not exist. Please try again.")
+                                    print(f"Interface '{Interface}' does not exist. Please try again.")
                                     continue
                         with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
-                            for IPInterface in IPInterfaceList:
-                                out = check_ip_interface(conn, IPInterface)
+                            for Interface in InterfaceList:
+                                out = check_ip_interface(conn, Interface)
                                 print(out)
                                 print(out, file=f)
                         break
