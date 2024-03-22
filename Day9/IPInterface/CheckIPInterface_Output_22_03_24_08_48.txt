@@ -1,0 +1,17 @@
+*down: administratively down
+!down: FIB overload down
+^down: standby
+(l): loopback
+(s): spoofing
+(d): Dampening Suppressed
+The number of interface that is UP in Physical is 5
+The number of interface that is DOWN in Physical is 1
+The number of interface that is UP in Protocol is 5
+The number of interface that is DOWN in Protocol is 1
+Interface                   IP Address/Mask    Physical Protocol VPN           
+MEth0/0/0                   unassigned         down     down     --            
+NULL0                       unassigned         up       up(s)    --            
+Vlanif130                   10.224.130.1/24    up       up       --            
+Vlanif131                   10.224.131.1/24    up       up       --            
+Vlanif132                   10.224.132.1/24    up       up       --            
+Vlanif997                   10.224.255.20/29   up       up       --            
