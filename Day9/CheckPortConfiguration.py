@@ -35,14 +35,25 @@ def get_credentials():
 	return username, password
 
 # Function to read a list of ports from a file
-def get_ports(file_path):
-	with open(f'{file_path}', 'r') as file:
-	    return file.read().splitlines() # Read each line in a list
+def get_ports_from_file():
+	while True:
+		try:
+			file_path = input("Enter your file path: ")
+			with open(f'{file_path}','r') as file:
+				return file.read().splitlines()
+        
+		except FileNotFoundError:
+			print("File not found. Please try again!")
+			continue # Continue if unvalid
 
 # Function to check the port configuration
 def check_port_configuration(conn, port):
 	out = conn.send_command(f"display interface {port}")
-	return out
+	print(out)
+
+def check_all_port_configuration(conn):
+	out = conn.send_command("display current-configuration all")
+	print(out)
 
 # Function to check if a port exists
 def check_port_exists(conn, port):
@@ -75,28 +86,18 @@ def main():
 					confirmation = input("Type '1' to enter your file path. Type '2' to check all Ports: ")
 					if confirmation == "1":
 						# Prompt user for file path until valid
-						while True:
-							try:
-								file_path = input("Enter your file path: ")
-								ports = get_ports(file_path)
-								break #exit when file is found
-
-							except FileNotFoundError:
-								print("File not found. Please try again!")
-								continue 	
+						ports = get_ports_from_file()
 						# Print the output to the console and creates a file to write the output   
 						with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt",'w') as f:
 							for port in ports:
 								out = check_port_configuration(conn, port)
-								print(out)
 								print(out, file=f)	
 						break
 
 					if confirmation == "2":
 						# Print the output to the console and creates a file to write the output   
 						with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt",'w') as f:
-							out = conn.send_command(f"display current-configuration all")
-							print(out)
+							out = check_all_port_configuration(conn)
 							print(out, file=f)
 						break # Exit the loop after writing the output
 
