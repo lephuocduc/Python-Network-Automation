@@ -13,6 +13,8 @@ User to be asked for the path of the Port list or type All to execute the script
 *Need Standardizing
 """
 
+#Script done, need standardizing
+
 from netmiko import ConnectHandler, NetMikoAuthenticationException
 from datetime import datetime
 import getpass
@@ -22,9 +24,16 @@ def get_credentials():
     password = getpass.getpass()
     return username, password
 
-def get_port(filepath):
-    with open(f'{filepath}', 'r') as file:
-	    return file.read().splitlines()
+def get_ports_from_file():
+    while True:
+        try:
+            filepath = input("Enter your file path: ")
+            with open(f'{filepath}', 'r') as file:
+                return file.read().splitlines()
+
+        except FileNotFoundError:
+            print("File now found. Please try again")
+            continue
 
 def get_current_description(conn, port):
     out = conn.send_command(f"display interface {port}")
@@ -67,82 +76,39 @@ def main():
             'port': 22,
             'username': username,
             'password': password
-        }
+            }
 
         try:
             with ConnectHandler(**connection_info) as conn:
                 print("Connected successfully")
-                timestamp = datetime.now().strftime("%d_%m_%y_%H_%M")
+                ports = get_ports_from_file()
+                for port in ports:
+                    print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
                 while True:
-                    confirmation1 = input("Type '1' to enter your file path. Type '2' to specify your Ports: ")
-                    if confirmation1 == "1":
-                        while True:
-                            try:
-                                filepath = input("Enter your file path: ")
-                                ports = get_port(filepath)
-                                break
-                            except FileNotFoundError:
-                                print("File now found. Please try again")
-                                continue                        
+                    confirmation = input(f"Do you want to remove all descriptions? Yes/ No: ")
+                    if confirmation.lower() == 'yes':
+                        backup_config(conn)
+                        for port in ports:
+                            remove_port_description(conn, port)
+                        print("All descriptions after deleted:")
                         for port in ports:
                             print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
-                        while True:
-                            confirmation = input(f"Do you want to remove all descriptions? Yes/ No: ")
-                            if confirmation.lower() == 'yes':
-                                backup_config(conn)
-                                for port in ports:
-                                    remove_port_description(conn, port)
-                                print("All descriptions after deleted")
-                                for port in ports:
-                                    print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
-                                break
-                            if confirmation.lower() == 'no':
-                                print("Operation cancelled!")
-                                break
-                            else: 
-                                continue
                         break
-                    if confirmation1 == "2":
-                        ports = []
-                        number = 1
-                        while True:
-                            port = input(f"Enter your port {number}: ")
-                            if port == "":
-                                break
-                            else:  
-                                if check_port_exists(conn, port):
-                                    ports.append(port)
-                                    number += 1
-                                    continue
-                                else:
-                                    print(f"Port '{port}' does not exist. Please try again.")
-                                    continue
-                        for port in ports:
-                            print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
-                        while True:
-                            confirmation = input("Do you want to remove all descriptions? Yes/ No: ")    
-                            if confirmation.lower() == "yes":
-                                backup_config(conn)
-                                for port in ports:
-                                    remove_port_description(conn, port)
-                                print("All descriptions after deleted")
-                                for port in ports:
-                                    print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")
-                                break
-                            if confirmation.lower() == "no":
-                                print("Operation cancelled!")
-                                break
-                            else:
-                                continue
+
+                    if confirmation.lower() == 'no':
+                        print("Operation cancelled!")
                         break
-                    else:
+
+                    else: 
                         continue
-                break
+            break
+                    
         except NetMikoAuthenticationException:
             print("Invalid credentials, please try again!")
             continue
+
         except Exception as e:
             print(f"An error has occured: {e}")
-            break
+            
 if __name__ == "__main__":
     main()
