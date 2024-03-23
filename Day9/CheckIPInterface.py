@@ -101,7 +101,7 @@ def main():
                     else:
                         continue # Continue to the loop until user types "1" or "2"
 
-            return("Finishing")
+            break
                     
         except NetMikoAuthenticationException:
             print("Invalid credentials, please try again!")
