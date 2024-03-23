@@ -29,14 +29,26 @@ def get_credentials():
     return username, password
 
 # Function to read a list of interfaces from a file
-def get_interfaces(file_path):
-    with open(f'{file_path}','r') as file:
-        return file.read().splitlines()
+def get_interfaces_from_file():
+    while True:
+        try:
+            file_path = input("Enter your file path: ")
+            with open(f'{file_path}','r') as file:
+                return file.read().splitlines()
+        
+        except FileNotFoundError:
+            print("File not found. Please try again!")
+            continue # Continue if unvalid
+
 
 # Function to check the IP interface details
 def check_ip_interface(conn, interface):
     out = conn.send_command(f"display ip interface {interface}")
-    return out
+    print(out)
+
+def check_all_ip_interfaces(conn):
+    out = conn.send_command("display ip interface brief")
+    print(out)
 
 # Function to check if an interface exists
 def check_interface_exists(conn, interface):
@@ -69,42 +81,32 @@ def main():
                     confirmation = input("Type '1' to enter your file path. Type '2' to check all IP Interaces: ")
                     if confirmation == "1":
                         # Prompt user for file path until valid
-                        while True:
-                            try:
-                                file_path = input("Enter your file path: ")
-                                interfaces = get_interfaces(file_path)
-                                # Print the output to the console and creates a file to write the output
-                                timestampt = datetime.now().strftime("%d_%m_%y_%H_%M") # Generates a timestamp for the output file                        
-                                with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
-                                    for interface in interfaces:
-                                        out = check_ip_interface(conn, interface)
-                                        print(out)
-                                        print(out, file=f)
-                                break
-                            
-                            except FileNotFoundError:
-                                print("File not found. Please try again!")
-                                continue # Continue if unvalid
+                        interfaces = get_interfaces_from_file()
+                        # Print the output to the console and creates a file to write the output
+                        timestampt = datetime.now().strftime("%d_%m_%y_%H_%M") # Generates a timestamp for the output file                        
+                        with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
+                            for interface in interfaces:
+                                out = check_ip_interface(conn, interface)
+                                print(out, file=f)
                         break
-            
+
                     if confirmation == "2":
                         # Print the output to the console and creates a file to write the output
                         timestampt = datetime.now().strftime("%d_%m_%y_%H_%M") # Generates a timestamp for the output file
                         with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
-                            out = check_ip_interface(conn, "brief")
-                            print(out)
+                            out = check_all_ip_interfaces(conn)
                             print(out, file=f)
                         break # Exit the loop after writing the output
 
                     else:
                         continue # Continue to the loop until user types "1" or "2"
 
-            break
+            return("Finishing")
                     
         except NetMikoAuthenticationException:
             print("Invalid credentials, please try again!")
             continue
-    
+
         except Exception as e:
             print(f"An error has occured {e}")
 
