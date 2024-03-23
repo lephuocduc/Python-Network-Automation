@@ -10,6 +10,7 @@ Yes/No option for execution.
 2.Choose No -> Stop the script.  
 *Need standardizing
 """
+#Script done, need standardizing
 
 from netmiko import ConnectHandler, NetMikoAuthenticationException
 from datetime import datetime
@@ -20,15 +21,22 @@ def get_credentials():
     password = getpass.getpass()
     return username, password
 
-def get_ports_and_vlans(pathfile):
+def get_ports_and_vlans_from_file():
     ports = []
     vlans = []
-    with open(f'{pathfile}','r') as file:
-        for line in file:
-            port, vlan = line.strip().split(" | ")
-            ports.append(port)
-            vlans.append(vlan)
-    return ports, vlans
+    while True:
+        try:
+            file_path = input("Enter your file path: ")
+            with open(f'{file_path}','r') as file:
+                for line in file:
+                    port, vlan = line.strip().split(" | ")
+                    ports.append(port)
+                    vlans.append(vlan)
+                return ports, vlans
+        
+        except FileNotFoundError:
+            print("File not found. Please try again!")
+            continue #If the file is not found, countinue the loop
 
 def get_current_vlan_info(conn, vlan):
     out = conn.send_command(f"display {vlan}")
@@ -43,9 +51,10 @@ def get_current_switchport_info(conn, port):
 def backup_config(conn):
     backup = conn.send_command('display current-configuration')
     timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
-    with open(f'./backup_files/backup_config.txt_{timestamp}','w') as f:
+    backup_file = f"./backup_files/backup_config_{timestamp}.txt"
+    with open(f'{backup_file}','w') as f:
         f.write(backup)
-        print("Backup configuration has been saved to backup_config.txt")
+        print(f"Backup configuration has been saved to '{backup_file}'")
 
 def add_vlan_to_switchport(conn, port, vlan):
     conn.enable()
@@ -89,22 +98,19 @@ def main():
             with ConnectHandler(**connection_info) as conn:
                 print("Connected successfully")
                 while True:
-                    confirmation1 = input("Type '1' to enter the path. Type '2' to apply to assign a VLAN for all Ports: ")
-                    if confirmation1 == "1":
-                        while True:
-                            try:
-                                pathfile = input("Enter your file path: ")
-                                ports, vlans = get_ports_and_vlans(pathfile)
-                                break #If the file is found and read successfully, break the loop
-                            except FileNotFoundError:
-                                print("File not found. Please try again!")
-                                continue #If the file is not found, countinue the loop
+                    confirmation = input("Type '1' to enter the file path. Type '2' to apply to assign a VLAN for many Ports: ")
+                    if confirmation == "1":
+                        ports, vlans = get_ports_and_vlans_from_file()
+
                         for vlan in vlans:
                             get_current_vlan_info(conn, vlan)
+
                         for port in ports:
                             get_current_switchport_info(conn, port)
+
                         for port, vlan in zip(ports, vlans):
                             print(f"Assign {vlan} to port: {port}")
+
                         while True:                    
                             confirmation = input("Do you want to execute the script? Yes/ No: ")
                             if confirmation.lower() == "yes":
@@ -112,22 +118,27 @@ def main():
                                 for port, vlan in zip(ports,vlans):
                                     add_vlan_to_switchport(conn, port, vlan)
                                 break
+
                             if confirmation.lower() == "no":
                                 print("Operation cancelled!")
                                 break
+                        
                         break
-                    if confirmation1 == "2":
+
+                    if confirmation == "2":
                         ports = []
                         number = 1
                         while True:
                             port = input(f"Enter your port {number}: ")
                             if port == "":
                                 break
+
                             else:  
                                 if check_port_exists(conn, port):
                                     ports.append(port)
                                     number += 1
                                     continue
+
                                 else:
                                     print(f"Port '{port}' does not exist. Please try again.")
                                     continue
@@ -136,6 +147,7 @@ def main():
                           vlan = input("Enter your VLAN to assign: ")
                           if check_vlan_exists(conn, vlan):
                             break
+                          
                           else:
                               print(f"VLAN '{vlan}' does not exist. Please try again.")
                               continue
@@ -150,15 +162,19 @@ def main():
                               for port in ports:
                                   add_vlan_to_switchport(conn, port, vlan)
                               break
+                          
                           if confirmation.lower() == "no":
                               print("Operation cancelled!")
                               break
+                          
                           else:
                               continue
                         break
+
                     else:
                       continue
-                break
+            break
+
         except NetMikoAuthenticationException:
             print("Invalid credentials. Please try again.")
             continue
