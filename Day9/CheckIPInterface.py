@@ -77,13 +77,13 @@ def main():
             with ConnectHandler(**connection_info) as conn:
                 print("Connected Successfully")               
                 # Prompt user for "1" or "2" option until valid
+                timestampt = datetime.now().strftime("%d_%m_%y_%H_%M") # Generates a timestamp for the output file                        
                 while True:
                     confirmation = input("Type '1' to enter your file path. Type '2' to check all IP Interaces: ")
                     if confirmation == "1":
                         # Prompt user for file path until valid
                         interfaces = get_interfaces_from_file()
                         # Print the output to the console and creates a file to write the output
-                        timestampt = datetime.now().strftime("%d_%m_%y_%H_%M") # Generates a timestamp for the output file                        
                         with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
                             for interface in interfaces:
                                 out = check_ip_interface(conn, interface)
@@ -92,7 +92,6 @@ def main():
 
                     if confirmation == "2":
                         # Print the output to the console and creates a file to write the output
-                        timestampt = datetime.now().strftime("%d_%m_%y_%H_%M") # Generates a timestamp for the output file
                         with open(f'./IPInterface/CheckIPInterface_Output_{timestampt}.txt','w') as f:
                             out = check_all_ip_interfaces(conn)
                             print(out, file=f)
