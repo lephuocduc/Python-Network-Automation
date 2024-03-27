@@ -1,8 +1,8 @@
 #NOTES
-#	Name: CheckIPInterface.py
-#	Author:  Duc Le
-#	Version:  1.0
-#	Major Release History:
+# Name: CheckPortConfiguration.py
+# Author:  Duc Le
+# Version:  1.0
+# Major Release History:
 
 #DESCRIPTION
 # The script prompts the user for their username and password to connect to Huawei Core Switch
@@ -28,6 +28,7 @@
 # After a successful authentication, the user will be asked to either enter a file path containing a list of ports (option 1) or check all port configurations (option 2).
 # If option 1 is chosen, the script will read the ports from the provided file and check the port configurations for each port, printing the output to the console and writing it to a file.
 # If option 2 is chosen, the script will check the port configurations for all ports and print the output to the console and write it to a file.
+
 
 from netmiko import ConnectHandler, NetMikoAuthenticationException
 from datetime import datetime
@@ -64,21 +65,10 @@ def check_all_port_configurations(conn):
     print(out)
 
 
-# Function to check if a port exists
-def check_port_exists(conn, port):
-    output = conn.send_command(f"display current-configuration interface {port}")
-    # Checks for specific error messages in the output
-    if "Wrong parameter found at '^' position." in output or "Error: Incomplete command found at '^' position." in output:
-        return False
-    else:
-        return True
-
-
 # main
 def main():
-    # Loop for user to enter username and password until valid
     while True:
-        username, password = get_credentials()
+        username, password = get_credentials() # Get username and password
         connection_info = {
             'device_type': 'huawei',
             'host': '10.224.130.1',
@@ -86,39 +76,43 @@ def main():
             'username': username,
             'password': password
         }
+        
         try:
-            with ConnectHandler(**connection_info) as conn:
+            with ConnectHandler(**connection_info) as conn: # Connect to device
                 print("Connected Successfully")
                 timestamp = datetime.now().strftime("%d_%m_%y_%H_%M")
-                # Generates a timestamp for the output file
-                # Prompt user for "1" or "2" option until valid
+                
                 while True:
+                    # Prompt user for "1" or "2" option
                     confirmation = input(
                         "Type '1' to enter your file path. \n"
                         "Type '2' to check all Ports: ")
+                    
                     if confirmation == "1":
-                        # Prompt user for file path until valid
-                        ports = get_ports_from_file()
-                        # Print the output to the console and creates a file to write the output
+                        ports = get_ports_from_file() # Get list of ports from file
                         with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt", 'w') as f:
                             for port in ports:
-                                out = check_port_configuration(conn, port)
-                                print(out, file=f)
+                                out = check_port_configuration(conn, port) # Check port configuration
+                                print(out, file=f) # Output to a file
                         break
+                    
                     if confirmation == "2":
                         # Print the output to the console and creates a file to write the output
                         with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt", 'w') as f:
-                            out = check_all_port_configurations(conn)
-                            print(out, file=f)
+                            out = check_all_port_configurations(conn) # Check all port configurations
+                            print(out, file=f) # Output to a file
                         break
                     # Continue to the loop until user types "1" or "2"
+                    
                     else:
                         print("*****Invalid input. Please try again*****")
                         continue
                 break
+            
         except NetMikoAuthenticationException:
             print("*****Invalid credentials, please try again*****")
             continue
+        
         except Exception as e:
             print(f"An error has occurred: {e}")
 
