@@ -112,7 +112,7 @@ def main():
                         break
                     # Continue to the loop until user types "1" or "2"
                     else:
-                        print("*****Unvalid input. Please try again*****")
+                        print("*****Invalid input. Please try again*****")
                         continue
                 break
         except NetMikoAuthenticationException:
