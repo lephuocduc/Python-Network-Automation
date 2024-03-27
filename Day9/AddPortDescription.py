@@ -8,7 +8,7 @@
 # The script prompts the user for their username and password to connect to Huawei Core Switch
 # It then provides the user with two options:
 # 1. Reading a file with a list of port and new description pairs and applying the new descriptions to the corresponding ports, 
-# 2. Reading a file with a list of ports and applying a single new description to all ports in the list.
+# 2. Reading a file with a list of ports and applying a new description to all ports in the list.
 
 #REQUIREMENT
 # Credentials to access to the Huawei network device.
@@ -26,7 +26,7 @@
 # Suppose you have a file named "PortDescription.txt" with the following content:
 # 10ge 2/0/20 | Port1_Description
 # 10ge 2/0/21 | Port2_Description
-# Running the script with option 1 and providing the file path "PortDescription.txt" will change the descriptions of GigabitEthernet0/0/1 to "Port1_Description" and GigabitEthernet0/0/2 to "Port2_Description".
+# Running the script with option 1 and providing the file path "PortDescription.txt" will change the descriptions of 10ge 2/0/20 to "Port1_Description" and 10ge 2/0/21 to "Port2_Description".
 # Alternatively, if you have a file named "PortList.txt" with the following content:
 # 10ge 2/0/20
 # 10ge 2/0/21
