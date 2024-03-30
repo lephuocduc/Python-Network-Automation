@@ -19,7 +19,9 @@
 # 2. File path containing a list of interfaces (if option 1 is chosen).
 
 #OUTPUTS
-# The output of the requested action is printed to the console and written to a file in the './IPInterface/' directory.
+# 1. Output of the 'display ip interface' command for the specified ports (if option 1 is chosen).
+# 2. Output of the 'display ip interface brief' command for all ports (if option 2 is chosen).
+# The output of the requested action is printed to the console and written to a file in the './PortConfiguration/' directory.
 
 #EXAMPLE
 # When the user runs the script, they will be prompted to enter their username and password.
@@ -74,7 +76,7 @@ def main():
             'username': username,
             'password': password
         }
-        
+
         try:
             with ConnectHandler(**connection_info) as conn: # Connect to device
                 print("Connected Successfully")
