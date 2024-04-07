@@ -27,59 +27,63 @@ from netmiko import ConnectHandler, NetMikoAuthenticationException  # Import req
 from datetime import datetime
 import getpass
 
-# Function to get username and password from user input
+# Prompting for credentials
 def get_credentials():
     username = input("Enter your username: ")
-    password = getpass.getpass()  # Securely get password without displaying it
+    password = '12345678a@' #getpass.getpass()  # Securely prompts for password
     return username, password
 
 
-# Function to get list of ports from a file
+# Function to read a list of ports from a file
 def get_ports_from_file():
     while True:
         try:
-            filepath = input("Enter your file path: ")
-            with open(f'{filepath}', 'r') as file:
-                return file.read().splitlines()  # Read file and return list of lines
-        except FileNotFoundError:
+            # Open file -> read its contents and split the lines
+            file_path = input("Enter your file path: ")
+            with open(f'{file_path}', 'r') as file:
+                return file.read().splitlines()
+            
+        except FileNotFoundError: # Catch the invalid file error
             print("*****File not found. Please try again*****")
-            continue
+            continue  # Continue if invalid
 
 
-# Function to get current description of a port
+# Function to check current description of a port
 def get_current_description(conn, port):
-    out = conn.send_command(f"display interface {port}")  # Send command to get interface info
-    lines = out.split('\n')  # Split output into lines
-    for line in lines:
-        if "Description:" in line:
-            return line.split("Description:")[1].strip()  # Return description if found
+        out = conn.send_command(f"display interface {port}") # Send command to device
+        lines = out.split('\n') # Split output into lines
+        for line in lines:
+            if "Description:" in line: # Check if the line contains the keyword "Description:"
+                return line.split ("Description:")[1].strip() # Extract the description
 
 
 # Function to remove description of a port
 def remove_port_description(conn, port):
     conn.enable()  # Enable privileged mode
-    config_commands = [
+    config_commands = [ # Send commands to device
         f"interface {port}",
-        "undo description",  # Remove description
-        "commit"  # Commit changes
+        "undo description",
+        "commit"
     ]
-    out = conn.send_config_set(config_commands)  # Send configuration commands
-    print(out)  # Print output
+    out = conn.send_config_set(config_commands)
+    print(out)
 
 
-# Function to backup current configuration
+#Function to backup configuration to a file
 def backup_config(conn):
-    backup = conn.send_command('display current-configuration')  # Get current configuration
-    timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")  # Get current timestamp
-    with open(f'./backup_files/backup_config.txt_{timestamp}', 'w') as f:
-        f.write(backup)  # Write backup to file
-    print("Backup configuration has been saved to backup_config.txt")
+    backup = conn.send_command('display current-configuration') # Send command to device
+    timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
+    backup_file = f"./backup_files/backup_config_{timestamp}.txt" # Create a new file to save backup
+    with open(f'{backup_file}','w') as f: # Open the file and save backup
+        f.write(backup)
+        print(f"Backup configuration has been saved to '{backup_file}'")
 
 
 # Main function
 def main():
     while True:
         username, password = get_credentials()  # Get username and password
+        # Device's information
         connection_info = {
             'device_type': 'huawei',
             'host': '10.224.130.1',
@@ -97,7 +101,7 @@ def main():
                     print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")  # Print current description
 
                 while True:
-                    confirmation = input(f"Do you want to remove all descriptions? Yes/ No: ")
+                    confirmation = input(f"Do you want to remove all descriptions? Yes/ No: ") # Confirm if the user wants to remove all descriptions
                     if confirmation.lower() == 'yes':
                         backup_config(conn)  # Backup configuration
                         for port in ports:
@@ -106,20 +110,23 @@ def main():
                         for port in ports:
                             print(f"The current description of port '{port}' is: {get_current_description(conn, port)}")  # Print new description
                         break
-                    elif confirmation.lower() == 'no':
+
+                    if confirmation.lower() == 'no':
                         print("Operation cancelled!")
                         break
+
                     else:
+                        print("*****Invalid input. Please try again*****")
                         continue
             break
 
-        except NetMikoAuthenticationException:
+        except NetMikoAuthenticationException: # Catch the authentication errors
             print("*****Invalid credentials, please try again*****")
             continue
 
-        except Exception as e:
+        except Exception as e: # Catch other errors
             print(f"An error has occurred: {e}")
-
+            break
 
 if __name__ == "__main__":
     main()

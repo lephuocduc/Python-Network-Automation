@@ -40,25 +40,26 @@ import getpass
 # Prompting for credentials
 def get_credentials():
     username = input("Enter your username: ")
-    password = getpass.getpass()  # Securely prompts for password
+    password = '12345678a@' #getpass.getpass()  # Securely prompts for password
     return username, password
 
 
 # Function to read a list of port and description pairs from a file
 def get_ports_and_new_descriptions_from_file():
+    # Initialize empty lists to store ports and new descriptions
     ports =[]
     new_descriptions = []
     while True:
         try:
             file_path = input("Enter your file path: ")
-            with open(f'{file_path}','r') as file:
+            with open(f'{file_path}','r') as file: # Open the file and read its contents
                 for line in file:
-                    port, new_description = line.strip().split(" | ")
-                    ports.append(port)
-                    new_descriptions.append(new_description)
+                    port, new_description = line.strip().split(" | ") # Split each line into port and VLAN
+                    ports.append(port) # Add port to the list
+                    new_descriptions.append(new_description) # Add new description to the list
             return ports, new_descriptions
 
-        except FileNotFoundError:
+        except FileNotFoundError: # Catch the invalid file error
             print("*****File not found. Please try again*****")
             continue #If the file is not found, countinue the loop
 
@@ -67,36 +68,39 @@ def get_ports_and_new_descriptions_from_file():
 def get_ports_from_file():
     while True:
         try:
+            # Open file -> read its contents and split the lines
             file_path = input("Enter your file path: ")
             with open(f'{file_path}', 'r') as file:
                 return file.read().splitlines()
-        except FileNotFoundError:
+            
+        except FileNotFoundError: # Catch the invalid file error
             print("*****File not found. Please try again*****")
-            continue  # Continue if unvalid
+            continue  # Continue if invalid
 
 
 # Function to check current description of a port
 def get_current_description(conn, port):
-      out = conn.send_command(f"display interface {port}")
-      lines = out.split('\n')
-      for line in lines:
-           if "Description:" in line:
-                return line.split ("Description:")[1].strip()
+        out = conn.send_command(f"display interface {port}") # Send command to device
+        lines = out.split('\n') # Split output into lines
+        for line in lines:
+            if "Description:" in line: # Check if the line contains the keyword "Description:"
+                return line.split ("Description:")[1].strip() # Extract the description
 
 
 #Function to backup configuration to a file
 def backup_config(conn):
-    backup = conn.send_command('display current-configuration')
+    backup = conn.send_command('display current-configuration') # Send command to device
     timestamp = datetime.now().strftime("%d_%m_%Y_%H_%M")
-    with open(f'./backup_files/backup_config.txt_{timestamp}','w') as f:
+    backup_file = f"./backup_files/backup_config_{timestamp}.txt" # Create a new file to save backup
+    with open(f'{backup_file}','w') as f: # Open the file and save backup
         f.write(backup)
-        print("Backup configuration has been saved to backup_config.txt")
+        print(f"Backup configuration has been saved to '{backup_file}'")
 
 
 #Function to change description
 def change_description(conn, port, new_description):
       conn.enable()
-      config_commands = [
+      config_commands = [ # Send commands to device
             f"interface {port}",
             f"description {new_description}",
             "commit"
@@ -109,6 +113,7 @@ def change_description(conn, port, new_description):
 def main():
     while True:
         username, password = get_credentials() # Get username and password
+        # Device's information
         connection_info = {
             'device_type': 'huawei',
             'host': '10.224.130.1',
@@ -118,7 +123,6 @@ def main():
         }
 
         try:
-            # Establish a connection to the device
             with ConnectHandler(**connection_info) as conn: # Connect to device
                 print("Connected Successfully")
 
@@ -152,7 +156,7 @@ def main():
 
                     if confirmation == "2":
                         ports = get_ports_from_file() # Get ports from a file
-                        new_description = input("Enter new description: ")
+                        new_description = input("Enter new description: ") # Input new description
                         for port in ports:
                             print(f"The current description of port '{port}' is: {get_current_description(conn, port)}") # Print the current descriptions for each port
                         while True:
@@ -165,9 +169,11 @@ def main():
                                 for port in ports:
                                     print(f"The current description of port '{port}' is: {get_current_description(conn, port)}") # Print the new descriptions for each port
                                 break
+
                             if confirmation.lower() == "no":
                                 print("Operation cancelled!")
                                 break
+
                             else:
                                 print("*****Invalid input. Please try again*****")
                                 continue
@@ -178,15 +184,13 @@ def main():
                         continue
                 break
 
-        except NetMikoAuthenticationException:
-            # Handle authentication exception
+        except NetMikoAuthenticationException: # Catch the authentication errors
             print("*****Invalid credentials, please try again*****")
             continue
 
-        except Exception as e:
-            # Handle other exceptions
+        except Exception as e: # Catch other errors
             print(f"An error has occurred: {e}")          
-
+            break
 
 if __name__ == "__main__":
     main()

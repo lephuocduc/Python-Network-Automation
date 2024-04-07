@@ -107,7 +107,7 @@ def backup_config(conn):
 # Function to add vlan to switch port
 def add_vlan_to_switchport(conn, port, vlan):
     conn.enable()
-    config_commands = [ # Send command to device
+    config_commands = [ # Send commands to device
         f'interface {port}',
         'port link-type access',
         f'port default {vlan}',
@@ -184,42 +184,45 @@ def main():
                     if confirmation == "2":
                         ports = get_ports_from_file() # Get ports from a file                        
                         while True:
-                          vlan = input("Enter your VLAN to assign: ") # Input vlan to assign
-                          if check_vlan_exists(conn, vlan):
-                            break
-                          
-                          else:
-                              print(f"VLAN '{vlan}' does not exist. Please try again.")
-                              continue #Continue if vlan doesn't exist
+                            vlan = input("Enter your VLAN to assign: ") # Input vlan to assign
+                            if check_vlan_exists(conn, vlan):
+                                break
+                            
+                            else:
+                                print(f"VLAN '{vlan}' does not exist. Please try again.")
+                                continue #Continue if vlan doesn't exist
                           
                         get_current_vlan_info(conn, vlan) # Get current vlan info
 
                         for port in ports:
-                          get_current_switchport_info(conn, port) # Get current port info
+                            get_current_switchport_info(conn, port) # Get current port info
 
                         while True:
-                          confirmation = input(f"Do you want to assign {vlan} to all ports: {ports}? Yes/ No: ") # Confirm if the user wants to execute the script
-                          if confirmation.lower() == "yes":
-                              backup_config(conn) # Backup configuration
-                              for port in ports:
-                                  add_vlan_to_switchport(conn, port, vlan) # Assign vlan to port
-                              break
-                          
-                          if confirmation.lower() == "no":
-                              print("Operation cancelled!")
-                              break
-                          
-                          else:
-                              continue
+                            confirmation = input(f"Do you want to assign {vlan} to all ports: {ports}? Yes/ No: ") # Confirm if the user wants to execute the script
+                            if confirmation.lower() == "yes":
+                                backup_config(conn) # Backup configuration
+                                for port in ports:
+                                    add_vlan_to_switchport(conn, port, vlan) # Assign vlan to port
+                                break
+                            
+                            if confirmation.lower() == "no":
+                                print("Operation cancelled!")
+                                break
+                            
+                            else:
+                                print("*****Invalid input. Please try again*****")
+                                continue
                         break
 
                     else:
-                      continue
+                        print("*****Invalid input. Please try again*****")
+                        continue
             break
 
         except NetMikoAuthenticationException: # Catch the authentication errors
             print("Invalid credentials. Please try again.")
             continue
+
         except Exception as e: # Catch other errors
             print(f"An error has occured: {e}")
             break
