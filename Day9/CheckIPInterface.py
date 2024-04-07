@@ -45,7 +45,7 @@ def get_credentials():
 def get_interfaces_from_file():
     while True:
         try:
-            # Open file and read its contents, split the lines
+            # Open file -> read its contents and split the lines
             file_path = input("Enter your file path: ") 
             with open(f'{file_path}', 'r') as file:
                 return file.read().splitlines()
@@ -92,14 +92,14 @@ def main():
                     
                     if confirmation == "1":
                         interfaces = get_interfaces_from_file() # Get list of interfaces from file
-                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f: # Open the file and write contains to it
+                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f: # Open the file and write the output to it
                             for interface in interfaces:
                                 out = check_ip_interface(conn, interface) # Check ip interface
                                 print(out, file=f) # Output to a file
                         break
 
                     if confirmation == "2":
-                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f: # Open the file and write contains to it
+                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f: # Open the file and write the output to it
                             out = check_all_ip_interfaces(conn) # Check all ip interfaces
                             print(out, file=f) # Output to a file
                         break
@@ -110,11 +110,11 @@ def main():
                         continue
                 break
 
-        except NetMikoAuthenticationException: # Catch the authentication error
+        except NetMikoAuthenticationException: # Catch the authentication errors
             print("*****Invalid credentials, please try again*****")
             continue
 
-        except Exception as e: # Catch the other errors
+        except Exception as e: # Catch other errors
             print(f"An error has occurred {e}")
 
 

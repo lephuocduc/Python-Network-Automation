@@ -34,10 +34,10 @@ from netmiko import ConnectHandler, NetMikoAuthenticationException
 from datetime import datetime
 import getpass
 
-# Function to prompt the user for username and password
+# Function to prompt user for username and password
 def get_credentials():
     username = input("Enter your username: ")
-    password = getpass.getpass()
+    password = '12345678a@' #getpass.getpass()  # Securely prompts for password
     return username, password
 
 
@@ -45,6 +45,7 @@ def get_credentials():
 def get_ports_from_file():
     while True:
         try:
+            # Open file -> read its contents and split the lines
             file_path = input("Enter your file path: ")
             with open(f'{file_path}', 'r') as file:
                 return file.read().splitlines()
@@ -69,6 +70,7 @@ def check_all_port_configurations(conn):
 def main():
     while True:
         username, password = get_credentials() # Get username and password
+        # Device's information
         connection_info = {
             'device_type': 'huawei',
             'host': '10.224.130.1',
@@ -90,7 +92,7 @@ def main():
                     
                     if confirmation == "1":
                         ports = get_ports_from_file() # Get list of ports from file
-                        with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt", 'w') as f:
+                        with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt", 'w') as f: # Open the file and write the output to it
                             for port in ports:
                                 out = check_port_configuration(conn, port) # Check port configuration
                                 print(out, file=f) # Output to a file
@@ -98,22 +100,22 @@ def main():
                     
                     if confirmation == "2":
                         # Print the output to the console and creates a file to write the output
-                        with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt", 'w') as f:
+                        with open(f"./PortConfiguration/CheckPortConfiguration_Output_{timestamp}.txt", 'w') as f: # Open the file and write the output to it
                             out = check_all_port_configurations(conn) # Check all port configurations
                             print(out, file=f) # Output to a file
                         break
+
                     # Continue to the loop until user types "1" or "2"
-                    
                     else:
                         print("*****Invalid input. Please try again*****")
                         continue
                 break
             
-        except NetMikoAuthenticationException:
+        except NetMikoAuthenticationException: # Catch the authentication errors
             print("*****Invalid credentials, please try again*****")
             continue
         
-        except Exception as e:
+        except Exception as e: # Catch other errors
             print(f"An error has occurred: {e}")
 
 
