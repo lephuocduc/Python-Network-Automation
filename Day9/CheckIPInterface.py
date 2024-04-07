@@ -49,20 +49,21 @@ def get_interfaces_from_file():
             file_path = input("Enter your file path: ") 
             with open(f'{file_path}', 'r') as file:
                 return file.read().splitlines()
+            
         except FileNotFoundError: # Catch the invalid file error
             print("*****File not found. Please try again*****")
-            continue  # Continue if unvalid
+            continue  # Continue if invalid
 
 
 # Function to check the IP interface details
 def check_ip_interface(conn, interface):
-    out = conn.send_command(f"display ip interface {interface}")
+    out = conn.send_command(f"display ip interface {interface}") # Send command to device
     print(out)
 
 
 # Function to check all IP interfaces
 def check_all_ip_interfaces(conn):
-    out = conn.send_command("display ip interface brief")
+    out = conn.send_command("display ip interface brief") # Send command to device
     print(out)
 
 

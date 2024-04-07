@@ -49,20 +49,21 @@ def get_ports_from_file():
             file_path = input("Enter your file path: ")
             with open(f'{file_path}', 'r') as file:
                 return file.read().splitlines()
-        except FileNotFoundError:
+            
+        except FileNotFoundError: # Catch the invalid file error
             print("*****File not found. Please try again*****")
-            continue  # Continue if unvalid
+            continue  # Continue if invalid
 
 
 # Function to check the port configuration
 def check_port_configuration(conn, port):
-    out = conn.send_command(f"display interface {port}")
+    out = conn.send_command(f"display interface {port}") # Send command to device
     print(out)
 
 
 # Function to check all port configurations
 def check_all_port_configurations(conn):
-    out = conn.send_command("display current-configuration all")
+    out = conn.send_command("display current-configuration all") # Send command to device
     print(out)
 
 
