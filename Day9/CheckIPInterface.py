@@ -37,7 +37,7 @@ import getpass
 # Function to prompt user for username and password
 def get_credentials():
     username = input("Enter your username: ")
-    password = getpass.getpass()  # Securely prompts for password
+    password = '12345678a@' #getpass.getpass()  # Securely prompts for password
     return username, password
 
 
@@ -45,10 +45,11 @@ def get_credentials():
 def get_interfaces_from_file():
     while True:
         try:
-            file_path = input("Enter your file path: ")
+            # Open file and read its contents, split the lines
+            file_path = input("Enter your file path: ") 
             with open(f'{file_path}', 'r') as file:
                 return file.read().splitlines()
-        except FileNotFoundError:
+        except FileNotFoundError: # Catch the invalid file error
             print("*****File not found. Please try again*****")
             continue  # Continue if unvalid
 
@@ -69,6 +70,7 @@ def check_all_ip_interfaces(conn):
 def main():
     while True:
         username, password = get_credentials() # Get username and password
+        # Device's information
         connection_info = {
             'device_type': 'huawei',
             'host': '10.224.130.1',
@@ -90,14 +92,14 @@ def main():
                     
                     if confirmation == "1":
                         interfaces = get_interfaces_from_file() # Get list of interfaces from file
-                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f:
+                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f: # Open the file and write contains to it
                             for interface in interfaces:
                                 out = check_ip_interface(conn, interface) # Check ip interface
                                 print(out, file=f) # Output to a file
                         break
 
                     if confirmation == "2":
-                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f:
+                        with open(f'./IPInterface/CheckIPInterface_Output_{timestamp}.txt', 'w') as f: # Open the file and write contains to it
                             out = check_all_ip_interfaces(conn) # Check all ip interfaces
                             print(out, file=f) # Output to a file
                         break
@@ -108,11 +110,11 @@ def main():
                         continue
                 break
 
-        except NetMikoAuthenticationException:
+        except NetMikoAuthenticationException: # Catch the authentication error
             print("*****Invalid credentials, please try again*****")
             continue
 
-        except Exception as e:
+        except Exception as e: # Catch the other errors
             print(f"An error has occurred {e}")
 
 
