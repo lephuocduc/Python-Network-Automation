@@ -19,7 +19,7 @@
 # 2. File path containing a list of ports (if option 1 is chosen).
 
 #OUTPUTS
-# 1. Output of the 'display interface' command for the specified ports (if option 1 is chosen).
+# 1. Output of the 'display current-configuration interface' command for the specified ports (if option 1 is chosen).
 # 2. Output of the 'display current-configuration all' command for all ports (if option 2 is chosen).
 # The output is printed to the console and written to a file in the './PortConfiguration/' directory.
 
@@ -57,7 +57,7 @@ def get_ports_from_file():
 
 # Function to check the port configuration
 def check_port_configuration(conn, port):
-    out = conn.send_command(f"display interface {port}") # Send command to device
+    out = conn.send_command(f"display current-configuration interface {port}") # Send command to device
     print(out)
 
 
@@ -67,7 +67,7 @@ def check_all_port_configurations(conn):
     print(out)
 
 
-# main
+# Function main
 def main():
     while True:
         username, password = get_credentials() # Get username and password
