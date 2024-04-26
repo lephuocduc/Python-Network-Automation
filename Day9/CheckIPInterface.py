@@ -37,7 +37,7 @@ import getpass
 # Function to prompt user for username and password
 def get_credentials():
     username = input("Enter your username: ")
-    password = '12345678a@' #getpass.getpass()  # Securely prompts for password
+    password = getpass.getpass()  # Securely prompts for password
     return username, password
 
 
