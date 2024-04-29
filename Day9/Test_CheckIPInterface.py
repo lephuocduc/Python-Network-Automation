@@ -1,38 +1,50 @@
 import unittest
-from unittest.mock import patch, mock_open, MagicMock
+from unittest.mock import patch, mock_open
 from CheckIPInterface import *
 
-class Test(unittest.TestCase):
+class TestCheckIPInterface(unittest.TestCase):
 
-    # input: username, password
-    # mock: username, password input from user
-    # the return of the funciton should be what mock username, password input
-    @patch('builtins.input', return_value='test_username')
-    @patch('getpass.getpass', return_value='test_password')
-    def test_get_credentials(self, input, getpass):
+    @patch('builtins.input', return_value='username')
+    @patch('getpass.getpass', return_value='password')
+    def test_get_credentials(self, mock_input, mock_getpass):
         username, password = get_credentials()
-        self.assertEqual(username, 'test_username')
-        self.assertEqual(password, 'test_password')
+        self.assertEqual(username, 'username')
+        self.assertEqual(password, 'password')
 
-    # input: file path, its content
-    # mock: file path, its content
-    # the return of the function should be a array of all file's content 
-    @patch('builtins.input', return_value='/path/to/your/file.txt')
-    @patch('builtins.open', new_callable=mock_open, read_data='vlanif 130\nvlanif 131')
-    def test_get_interfaces_from_file(self, mock_file_input, mock_file_open):
+    @patch('builtins.input', return_value='file_path')
+    @patch('builtins.open', new_callable=mock_open, read_data='interface1\ninterface2')
+    def test_get_interfaces_from_file(self, mock_input, mock_open):
         interfaces = get_interfaces_from_file()
-        self.assertEqual(interfaces,['vlanif 130','vlanif 131'])
-    
-    # mock: connection, interface
-    # the return of the function 
-    #def test_check_ip_interface(self, mock_conn):
-        # Call the function
-     #   check_ip_interface(mock_conn, "eth0")
+        self.assertEqual(interfaces, ['interface1', 'interface2'])
 
-        # Assert that conn.send_command was called with the correct arguments
-      #  mock_conn.send_command.assert_called_with("display ip interface eth0")
+    @patch('netmiko.ConnectHandler')
+    def test_check_ip_interface(self, mock_connect_handler):
+        conn = mock_connect_handler.return_value.__enter__()
+        conn.send_command.return_value = 'output'
+        out = check_ip_interface(conn, 'interface1')
+        conn.send_command.assert_called_with('display ip interface interface1')
+
+    @patch('netmiko.ConnectHandler')
+    def test_check_all_ip_interfaces(self, mock_connect_handler):
+        conn = mock_connect_handler.return_value.__enter__()
+        conn.send_command.return_value = 'output'
+        out = check_all_ip_interfaces(conn)
+        conn.send_command.assert_called_with('display ip interface brief')
 
 
+    @patch('CheckIPInterface.get_credentials')
+    @patch('CheckIPInterface.get_interfaces_from_file')
+    @patch('CheckIPInterface.check_ip_interface')
+    @patch('CheckIPInterface.check_all_ip_interfaces')
+    def test_main(self, mock_check_all_ip_interfaces, mock_check_ip_interface, mock_get_interfaces_from_file, mock_get_credentials):
+        mock_get_credentials.return_value = ('username', 'password')
+        mock_get_interfaces_from_file.return_value = ['interface1', 'interface2']
+        main()
+        mock_get_credentials.assert_called()
+        mock_get_interfaces_from_file.assert_called()
+        mock_check_ip_interface.assert_called()
+        mock_check_all_ip_interfaces.assert_called()
+        
 if __name__ == '__main__':
     unittest.main()
 

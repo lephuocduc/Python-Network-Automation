@@ -37,7 +37,7 @@ import getpass
 # Function to prompt user for username and password
 def get_credentials():
     username = input("Enter your username: ")
-    password = '12345678a@'#getpass.getpass()  # Securely prompts for password
+    password = getpass.getpass("Enter your password: ")  # Securely prompts for password
     return username, password
 
 
@@ -51,7 +51,7 @@ def get_interfaces_from_file():
                 return file.read().splitlines()
             
         except FileNotFoundError: # Catch the invalid file error
-            print("*****File not found. Please try again*****")
+            raise FileNotFoundError()
             continue  # Continue if invalid
 
 
@@ -117,6 +117,7 @@ def main():
 
         except Exception as e: # Catch other errors
             print(f"An error has occurred {e}")
+            break
 
 
 if __name__ == "__main__":
